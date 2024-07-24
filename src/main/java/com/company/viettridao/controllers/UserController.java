@@ -1,12 +1,13 @@
 package com.company.viettridao.controllers;
 
-import com.company.viettridao.enums.Role;
+import com.company.viettridao.models.ERole;
 import com.company.viettridao.models.User;
 import com.company.viettridao.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+
 
 @RestController
 public class UserController {
@@ -20,9 +21,8 @@ public class UserController {
      * @return result find in database user have username and password is correct
      */
     @GetMapping("/login")
-    public boolean loginAccount(@RequestParam String userName, @RequestParam String password){
-        User result = userRepository.findByUserNameAndPassword(userName, password);
-        return result != null;
+    public User loginAccount(@RequestParam String userName, @RequestParam String password){
+        return userRepository.findUserByUserNameAndPassword(userName, password);
     }
 
     /**
@@ -85,11 +85,11 @@ public class UserController {
     public String registerSeller(@PathVariable long id, boolean accept){
         try{
             User u = getUserById(id);
-            if(u.getRole() != Role.ADMIN) {
+            if(u.getRole() != ERole.ADMIN) {
                 if (accept)
-                    u.setRole(Role.SELLER);
+                    u.setRole(ERole.SELLER);
                 else
-                    u.setRole(Role.BUYERWANTTOBECOMESELLER);
+                    u.setRole(ERole.BUYERBECOMESELLER);
             }
             else throw new Exception("Account has role ADMIN!");
             userRepository.save(u);
